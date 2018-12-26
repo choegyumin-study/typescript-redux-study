@@ -2,13 +2,15 @@ import * as React from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { Tasks } from '../models/task';
-import { ApplicationState, todoAction } from '../store';
+import { ApplicationState, asyncSelectors, todoAction, todoActionTypes } from '../store';
 
-interface Props {
+interface OwnProps {
 }
 
 interface PropsFromState {
   tasks: Tasks;
+  isFetching: boolean;
+  error?: string;
 }
 
 interface PropsFromDispatch {
@@ -16,27 +18,35 @@ interface PropsFromDispatch {
   fetchTask: typeof todoAction.fetchTask.request;
 }
 
-class Todo extends React.Component<Props & PropsFromState & PropsFromDispatch> {
+type Props = OwnProps & PropsFromState & PropsFromDispatch;
+
+class Todo extends React.Component<Props> {
   public render(): React.ReactNode {
+    const {fetchTask, fetchTasks, tasks, isFetching, error} = this.props;
+
     return (
       <React.Fragment>
         To Do
-        <button onClick={() => this.props.fetchTask(Math.random().toString(36).substring(2, 15))}>Load</button>
-        <button onClick={() => this.props.fetchTasks()}>Load All</button>
+        {/*<button onClick={() => fetchTask(Math.random().toString(36).substring(2, 15))}>Load</button>*/}
+        <button onClick={() => fetchTasks()}>Load All</button>
         <ul>
-          {this.props.tasks.map(task => (
+          {tasks.map(task => (
             <li key={task.id}>
               {task.content}
             </li>
           ))}
         </ul>
+        <div>{isFetching ? (<div>Loading..</div>) : ''}</div>
+        <pre><code>{error}</code></pre>
       </React.Fragment>
     );
   }
 }
 
-const mapStateToProps = ({ todo }: ApplicationState) => ({
+const mapStateToProps = ({ loading, todo }: ApplicationState) => ({
   tasks: todo.tasks,
+  isFetching: asyncSelectors.isFetching([todoActionTypes.FETCH_TASKS])(loading),
+  error: asyncSelectors.error([todoActionTypes.FETCH_TASKS])(loading),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) =>

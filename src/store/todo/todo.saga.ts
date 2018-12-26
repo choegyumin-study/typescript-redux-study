@@ -21,7 +21,7 @@ function* fetchTasksSaga() {
 function* fetchTaskSaga(action: ActionType<typeof todoAction.fetchTask.request>) {
   try {
     yield delay(1000);
-    const data: Task = new Task({ id: action.payload, content: 'qwerasdfzxcv' });
+    const data: Task = new Task({ id: action.payload, content: Math.random().toString(36).substring(2, 15) });
 
     yield put(todoAction.fetchTask.success(data));
   } catch (err) {
