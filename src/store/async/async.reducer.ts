@@ -10,7 +10,7 @@ export interface AsyncState {
   [key: string]: AsyncStateItem;
 }
 
-const asyncActionRegex = /(.*)_(REQUEST|SUCCESS|FAILURE)$/;
+const asyncActionTypeRegex = /(.*)_(REQUEST|SUCCESS|FAILURE)$/;
 
 function extractErrorMessage(error: AxiosError): string {
   if (error.response && error.response.data && error.response.data.message) {
@@ -23,7 +23,7 @@ function extractErrorMessage(error: AxiosError): string {
 }
 
 const asyncReducer: Reducer<AsyncState, AnyAction> = (state = {}, action): AsyncState => {
-  const matches = asyncActionRegex.exec(action.type);
+  const matches = asyncActionTypeRegex.exec(action.type);
 
   // not a *_REQUEST / *_SUCCESS / *_FAILURE actions, so we ignore them
   if (!matches) { return state; }

@@ -14,15 +14,28 @@ export const createAsyncActionTypes = (type: string): AsyncActionTypes => ({
   FAILURE: type + '_FAILURE',
 });
 
-export type AsyncActionBuilder<P1, M1, P2, M2, P3, M3> = {
+export type AsyncActionBuilder<
+  P1 = undefined,
+  M1 = undefined,
+  P2 = undefined,
+  M2 = undefined,
+  P3 = Error,
+  M3 = undefined
+  > = {
   request: FsaBuilder<StringType, B<P1>, B<M1>>;
   success: FsaBuilder<StringType, B<P2>, B<M2>>;
   failure: FsaBuilder<StringType, B<P3>, B<M3>>;
 };
 
 export interface CreateAsyncAction {
-  // tslint:disable-next-line:callable-types
-  <P1, M1, P2, M2, P3, M3>(): AsyncActionBuilder<P1, M1, P2, M2, P3, M3>;
+  <
+    P1 = undefined,
+    M1 = undefined,
+    P2 = undefined,
+    M2 = undefined,
+    P3 = Error,
+    M3 = undefined
+  >(): AsyncActionBuilder<P1, M1, P2, M2, P3, M3>;
 }
 
 export const createAsyncAction = (types: AsyncActionTypes): CreateAsyncAction => {
